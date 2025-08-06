@@ -1,14 +1,15 @@
 <script setup lang="ts">
-
+import Dashboard from '@/layouts/Dashboard.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 </script>
 
 <template>
-  <div class="p-6 lg:p-8">
-    <div class="text-center">
-      <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-        Inventory
-      </h1>
-      <p class="text-gray-600">This section is coming soon!</p>
-    </div>
-  </div>
+  <Dashboard>
+    <template #header>
+      <PageHeader
+        title="Inventory"
+        description="Manage your home inventory, from pantry ingredients and kitchen equipment to household items, appliances, wardrobe pieces, and more."
+      />
+    </template>
+  </Dashboard>
 </template>

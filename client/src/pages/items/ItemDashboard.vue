@@ -1,14 +1,15 @@
 <script setup lang="ts">
-
+import Dashboard from '@/layouts/Dashboard.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 </script>
 
 <template>
-  <div class="p-6 lg:p-8">
-    <div class="text-center">
-      <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-        Item & Category Masterlist
-      </h1>
-      <p class="text-gray-600">This section is coming soon!</p>
-    </div>
-  </div>
+  <Dashboard>
+    <template #header>
+      <PageHeader
+        title="Item & Category Masterlist"
+        description="This section is coming soon!"
+      />
+    </template>
+  </Dashboard>
 </template>

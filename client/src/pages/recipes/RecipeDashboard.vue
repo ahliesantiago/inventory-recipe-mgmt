@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import Dashboard from '@/layouts/Dashboard.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
+const recipeView = ref<'cards' | 'list'>('cards')
 </script>
 
 <template>
-  <div class="p-6 lg:p-8">
-    <div class="text-center">
-      <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-        Recipes
-      </h1>
-      <p class="text-gray-600">This section is coming soon!</p>
-    </div>
-  </div>
+  <Dashboard>
+    <template #header>
+      <PageHeader
+        title="Recipes"
+        description="Manage and organize your recipe collection"
+        :has-toggles="true"
+        :view="recipeView"
+        @update:view="recipeView = $event"
+      />
+    </template>
+  </Dashboard>
 </template>
