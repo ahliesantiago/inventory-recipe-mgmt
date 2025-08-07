@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' app.ts",
+    "start": "ts-node app.ts",
+    "migrate": "node-pg-migrate up -m src/db/migrations -c database.js -e development",
+    "migrate:create": "node-pg-migrate create -m src/db/migrations -c database.js -e development",
+    "migrate:latest": "node-pg-migrate up -m src/db/migrations -c database.js -e development",
+    "migrate:rollback": "node-pg-migrate down -m src/db/migrations -c database.js -e development",
+    "migrate:reset": "node-pg-migrate reset -m src/db/migrations -c database.js -e development",
+    "migrate:status": "node-pg-migrate status -m src/db/migrations -c database.js -e development",
+    "seed": "ts-node src/db/seeds/seed.ts",
     "test": "jest"
   },
   "repository": {
@@ -17,12 +26,18 @@
   "homepage": "https://github.com/ahliesantiago/inventory-recipe-mgmt#readme",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg-promise": "^11.15.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.1.0",
+    "@types/pg-promise": "^0.0.28",
+    "dotenv-cli": "^10.0.0",
+    "node-pg-migrate": "^8.0.3",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
