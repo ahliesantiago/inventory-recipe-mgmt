@@ -19,7 +19,7 @@ const toggleSidebar = () => {
   <!-- Desktop Sidebar -->
   <aside
     :class="[
-      'hidden lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ease-in-out',
+      'hidden lg:min-h-screen lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ease-in-out',
       sidebarExpanded ? 'w-64' : 'w-20'
     ]"
   >

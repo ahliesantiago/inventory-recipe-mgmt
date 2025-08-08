@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import MobileNav from './layouts/MobileNav.vue'
 import SideBar from './layouts/SideBar.vue'
 </script>
