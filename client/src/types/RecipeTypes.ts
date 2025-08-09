@@ -10,7 +10,16 @@ export interface Recipe {
   total_time: number // derived
   user_rating?: number
   categories?: string[] // derived
-  ingredients: string[] // derived
+  ingredients: RecipeIngredients[] // derived
   created_at: Date
   updated_at: Date
+}
+
+export interface RecipeIngredients {
+  ingredient: string
+  unit: string
+  unit_plural: string
+  unit_acronym: string
+  unit_plural_acronym: string
+  qty: number
 }
