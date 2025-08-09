@@ -2,6 +2,7 @@
 import { Clock, Star, UtensilsCrossed } from 'lucide-vue-next'
 import { computed } from 'vue'
 import type { Recipe } from '@/types/RecipeTypes'
+import RecipeImage from '@/components/recipes/details/RecipeImage.vue'
 
 const props = defineProps<{
   recipe: Recipe
@@ -27,13 +28,13 @@ const formattedTime = computed(() => {
     class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
   >
     <div class="aspect-video bg-gray-200 relative">
-      <img
-        v-if="recipe.image"
-        :src="recipe.image"
-        :alt="recipe.recipe_name"
-        class="w-full h-full object-cover"
+      <RecipeImage
+        :hasImage="!!recipe.image"
+        :recipeImage="recipe.image"
+        :recipeName="recipe.recipe_name"
+        imgStyles="h-full"
+        iconStyles="h-full flex items-center justify-center"
       />
-      <UtensilsCrossed v-if="!recipe.image" class="w-full h-full text-gray-400 flex items-center justify-center" />
       <div class="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-medium flex items-center">
         <Star class="h-3 w-3 text-yellow-400 mr-1" />
         {{ recipe.user_rating }}

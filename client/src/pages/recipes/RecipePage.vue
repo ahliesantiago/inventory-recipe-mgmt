@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { ExternalLink, Maximize2, Minimize2, ShoppingBasket, Star, UtensilsCrossed, X } from 'lucide-vue-next'
-import type { Recipe, RecipeIngredients } from '@/types/RecipeTypes'
+import { ExternalLink, Maximize2, Minimize2, ShoppingBasket, Star, X } from 'lucide-vue-next'
+import type { Recipe } from '@/types/RecipeTypes'
+import RecipeImage from '@/components/recipes/details/RecipeImage.vue'
 import RecipeSectionHeader from '@/components/ui/recipe-page/RecipeSectionHeader.vue'
 
 const props = defineProps<{
@@ -16,7 +17,6 @@ defineEmits<{
 type ViewMode = 'modal' | 'fullscreen'
 
 const view = ref<ViewMode>('fullscreen')
-const showAddToGroceryModal = ref(false)
 
 const containerClasses = computed(() => ({
   'recipe-modal-overlay': view.value === 'modal',
@@ -111,13 +111,13 @@ onMounted(() => {
         <!-- Recipe Image and Basic Info -->
         <div class="grid md:grid-cols-2 gap-6">
           <div>
-            <img
-              v-if="selectedRecipe.image"
-              :src="selectedRecipe.image"
-              :alt="selectedRecipe.recipe_name"
-              class="w-full aspect-video object-cover rounded-lg"
+            <RecipeImage
+              :hasImage="!!selectedRecipe.image"
+              :recipeImage="selectedRecipe.image"
+              :recipeName="selectedRecipe.recipe_name"
+              imgStyles="aspect-video rounded-lg"
+              iconStyles="h-75 border border-gray-300"
             />
-            <UtensilsCrossed v-if="!selectedRecipe.image" class="w-full h-75 text-gray-400 border border-gray-500" />
           </div>
 
           <!-- Side Details -->
@@ -168,25 +168,25 @@ onMounted(() => {
             <div class="min-h-[2.5rem] flex items-center justify-between mb-4 flex-wrap md:flex-nowrap gap-2">
               <RecipeSectionHeader title="Ingredients" />
               <button
-                @click="showAddToGroceryModal = true"
                 class="p-2 md:px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm flex items-center gap-2"
               >
                 <ShoppingBasket class="h-5 w-5 inline-block" />
                 <span class="block sm:hidden md:block">Add to Grocery List</span>
               </button>
             </div>
-            <div class="bg-gray-50 rounded-lg p-4">
-              <ul class="space-y-2">
-                <li
-                  v-for="ingredient in selectedRecipe.ingredients"
-                  :key="ingredient.ingredient"
-                  class="flex items-center text-gray-700"
-                >
-                  <div class="w-[6px] h-[6px] bg-blue-400 mr-3"></div>
-                  {{ ingredient.ingredient }} - {{ ingredient.qty }}{{ ingredient.qty > 1 ? ingredient.unit_plural_acronym : ingredient.unit_acronym }}
-                </li>
-              </ul>
-            </div>
+            <ul class="space-y-2 ps-2">
+              <span v-if="selectedRecipe.ingredients.length === 0" class="text-gray-500 italic">
+                Add ingredients to this recipe.
+              </span>
+              <li
+                v-for="ingredient in selectedRecipe.ingredients"
+                :key="ingredient.ingredient"
+                class="flex items-center text-gray-700 text-sm"
+              >
+                <div class="w-[6px] h-[6px] bg-blue-400 mr-3"></div>
+                {{ ingredient.ingredient }} - {{ ingredient.qty }}{{ ingredient.qty > 1 ? ingredient.unit_plural_acronym : ingredient.unit_acronym }}
+              </li>
+            </ul>
           </div>
 
           <!-- Instructions -->
@@ -196,9 +196,12 @@ onMounted(() => {
             </div>
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="space-y-4">
+                <div v-if="!selectedRecipe.steps || selectedRecipe.steps.length === 0" class="text-gray-500 italic">
+                  Add steps to this recipe.
+                </div>
                 <div
                   v-for="(step, index) in selectedRecipe.steps"
-                  :key="index"
+                  :key="index + 1"
                   class="flex"
                 >
                   <div class="flex-shrink-0 w-8 h-8 bg-blue-400 text-white rounded-full flex items-center justify-center text-sm font-medium mr-4">
