@@ -7,6 +7,7 @@ defineProps<{
   recipeCount: number
   recipeView: 'cards' | 'list'
   filteredRecipes: Recipe[]
+  openRecipe: (recipe: Recipe) => void
 }>()
 </script>
 
@@ -25,6 +26,8 @@ defineProps<{
       v-for="recipe in filteredRecipes"
       :key="recipe.id"
       :recipe="recipe"
+      @openRecipe="openRecipe"
+      @click="openRecipe(recipe)"
     />
   </div>
 
@@ -45,9 +48,10 @@ defineProps<{
           <tr
             v-for="recipe in filteredRecipes"
             :key="recipe.id"
-            class="hover:bg-gray-50 cursor-pointer"
+            class="hover:bg-gray-50 cursor-pointer h-full align-middle"
+            @click="openRecipe(recipe)"
           >
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 w-3/8">
               <div class="flex items-center">
                 <img
                   v-if="recipe.image"
@@ -61,30 +65,37 @@ defineProps<{
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-900 flex items-center space-x-2 space-y-1 flex-wrap">
-              <span
-                v-for="category in recipe.categories?.slice(0, 5)"
-                class="bg-gray-100 px-2 py-1 rounded-full text-xs"
-              >
-                {{ category }}
-              </span>
-              <span v-if="(recipe.categories?.length ?? 0) > 5" class="-ml-1">…</span>
+            <td class="px-6 py-4 w-2/8">
+              <div class="flex items-center flex-wrap gap-1">
+                <span v-if="recipe.categories?.length == 0" class="text-xs text-gray-500">
+                  N/A
+                </span>
+                <span
+                  v-for="category in recipe.categories?.slice(0, 5)"
+                  :key="category"
+                  class="bg-gray-100 px-2 py-1 rounded-full text-xs"
+                >
+                  {{ category }}
+                </span>
+                <span v-if="(recipe.categories?.length ?? 0) > 5" class="-ml-1">…</span>
+              </div>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-900">{{ recipe.prep_time }} min</td>
-            <td class="px-6 py-4 text-sm text-gray-900">
+            <td class="px-6 py-4 text-sm text-gray-900 w-1/8">{{ recipe.prep_time }} min</td>
+            <td class="px-6 py-4 text-sm text-gray-900 w-1/8">
               <div class="flex items-center">
                 <Star class="h-4 w-4 text-yellow-400 mr-1" />
                 {{ recipe.user_rating }}
               </div>
             </td>
-            <!-- To be implemented -->
-            <td class="px-6 py-4 text-sm text-gray-900">
-              <button class="text-blue-600 hover:text-blue-800 mr-3">
-                Edit
-              </button>
-              <button class="text-red-600 hover:text-red-800">
-                Delete
-              </button>
+            <td class="px-6 py-4 text-sm text-gray-900 w-1/8">
+              <div class="flex flex-col items-start space-y-1">
+                <button class="text-blue-600 hover:text-blue-800">
+                  Edit
+                </button>
+                <button class="text-red-600 hover:text-red-800">
+                  Delete
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

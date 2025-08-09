@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import { Plus } from 'lucide-vue-next'
 import Dashboard from '@/layouts/Dashboard.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import RecipeResults from '@/components/recipes/dashboard/RecipeResults.vue'
+import RecipePage from './RecipePage.vue'
 import type { Recipe } from '@/types/RecipeTypes'
 
 const recipeView = ref<'cards' | 'list'>('cards')
@@ -10,6 +12,7 @@ const searchQuery = ref('')
 const selectedCategory = ref('')
 const selectedTotalTime = ref('')
 const sortBy = ref('name')
+const selectedRecipe = ref<Recipe | null>(null)
 
 const recipes = ref<Recipe[]>([])
 
@@ -54,6 +57,14 @@ const filteredRecipes = computed(() => {
 
   return filtered
 })
+
+const openRecipe = (recipe: any) => {
+  selectedRecipe.value = recipe
+}
+
+const closeRecipe = () => {
+  selectedRecipe.value = null
+}
 
 onMounted(async () => {
   const res = await fetch('http://localhost:3000/api/recipes')
@@ -133,6 +144,13 @@ onMounted(async () => {
       :recipeCount="recipes.length"
       :recipeView="recipeView"
       :filteredRecipes="filteredRecipes"
+      :openRecipe="openRecipe"
     />
   </Dashboard>
+
+  <RecipePage
+    v-if="selectedRecipe"
+    :selectedRecipe="selectedRecipe"
+    :closeRecipe="closeRecipe"
+  />
 </template>
