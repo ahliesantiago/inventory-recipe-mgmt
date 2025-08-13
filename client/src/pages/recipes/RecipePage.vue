@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { ExternalLink, Maximize2, Minimize2, ShoppingBasket, Star, X } from 'lucide-vue-next'
-import type { Recipe } from '@/types/RecipeTypes'
+import { useRecipes } from '@/composables/useRecipes'
 import RecipeImage from '@/components/recipes/details/RecipeImage.vue'
 import RecipeSectionHeader from '@/components/ui/recipe-page/RecipeSectionHeader.vue'
+import type { Recipe } from '@/types/RecipeTypes'
 
 const props = defineProps<{
   closeRecipe: () => void
@@ -17,6 +18,8 @@ defineEmits<{
 type ViewMode = 'modal' | 'fullscreen'
 
 const view = ref<ViewMode>('fullscreen')
+
+const { deleteRecipe } = useRecipes()
 
 const containerClasses = computed(() => ({
   'recipe-modal-overlay': view.value === 'modal',
@@ -90,6 +93,18 @@ onMounted(() => {
         <h2 class="text-4xl md:text-3xl font-bold text-gray-900">{{ selectedRecipe.recipe_name }}</h2>
         <div class="flex items-center space-x-2">
           <button
+            @click="$router.push({ name: 'recipe-edit', params: { id: selectedRecipe.id } })"
+            class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            @click="deleteRecipe(selectedRecipe.id)"
+            class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors"
+          >
+            Delete
+          </button>
+          <button
             @click="toggleView"
             class="p-2 hover:bg-gray-100 rounded-md transition-colors"
             :title="view === 'modal' ? 'Switch to fullscreen (Cmd/Ctrl+F)' : 'Switch to modal'"
@@ -107,9 +122,9 @@ onMounted(() => {
       </div>
 
       <!-- Recipe Body -->
-      <div :class="['p-6 flex flex-col gap-6', view == 'fullscreen' ? 'py-10' : '']">
+      <div :class="['bg-[#e7ecef] p-6 flex flex-col gap-6', view == 'fullscreen' ? 'py-10' : '']">
         <!-- Recipe Image and Basic Info -->
-        <div class="grid md:grid-cols-2 gap-6">
+        <div class="grid sm:grid-cols-2 gap-6">
           <div>
             <RecipeImage
               :hasImage="!!selectedRecipe.image"
@@ -154,6 +169,13 @@ onMounted(() => {
                 {{ category }}
               </span>
             </div>
+
+            <!-- History -->
+            <div class="place-self-end">
+              <p class="text-xs text-gray-600">
+                <!-- Last prepared on: MMMM D, YYYY (dddd) -->
+              </p>
+            </div>
           </div>
         </div>
 
@@ -168,7 +190,7 @@ onMounted(() => {
             <div class="min-h-[2.5rem] flex items-center justify-between mb-4 flex-wrap md:flex-nowrap gap-2">
               <RecipeSectionHeader title="Ingredients" />
               <button
-                class="p-2 md:px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm flex items-center gap-2"
+                class="p-2 md:px-4 bg-[#3c6e71] text-white rounded-md hover:bg-[#284b63] transition-colors text-sm flex items-center gap-2"
               >
                 <ShoppingBasket class="h-5 w-5 inline-block" />
                 <span class="block sm:hidden md:block">Add to Grocery List</span>
@@ -194,21 +216,19 @@ onMounted(() => {
             <div class="min-h-[2.5rem] flex items-center justify-between mb-4">
               <RecipeSectionHeader title="Instructions" />
             </div>
-            <div class="bg-gray-50 rounded-lg p-4">
-              <div class="space-y-4">
-                <div v-if="!selectedRecipe.steps || selectedRecipe.steps.length === 0" class="text-gray-500 italic">
-                  Add steps to this recipe.
+            <div class="space-y-4">
+              <div v-if="!selectedRecipe.steps || selectedRecipe.steps.length === 0" class="text-gray-500 italic">
+                Add steps to this recipe.
+              </div>
+              <div
+                v-for="(step, index) in selectedRecipe.steps"
+                :key="index + 1"
+                class="flex"
+              >
+                <div class="flex-shrink-0 w-8 h-8 bg-blue-300 text-white rounded-full flex items-center justify-center text-sm font-medium mr-4">
+                  {{ index + 1 }}
                 </div>
-                <div
-                  v-for="(step, index) in selectedRecipe.steps"
-                  :key="index + 1"
-                  class="flex"
-                >
-                  <div class="flex-shrink-0 w-8 h-8 bg-blue-400 text-white rounded-full flex items-center justify-center text-sm font-medium mr-4">
-                    {{ index + 1 }}
-                  </div>
-                  <p class="text-gray-700 pt-1">{{ step }}</p>
-                </div>
+                <p class="text-gray-700 pt-1">{{ step }}</p>
               </div>
             </div>
           </div>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Recipe } from '@/types/RecipeTypes'
-import RecipeCard from './RecipeCard.vue'
 import { Star } from 'lucide-vue-next'
+import { useRecipes } from '@/composables/useRecipes'
+import RecipeCard from './RecipeCard.vue'
+import type { Recipe } from '@/types/RecipeTypes'
 
 defineProps<{
   recipeCount: number
@@ -9,6 +10,8 @@ defineProps<{
   filteredRecipes: Recipe[]
   openRecipe: (recipe: Recipe) => void
 }>()
+
+const { deleteRecipe } = useRecipes()
 </script>
 
 <template>
@@ -89,10 +92,16 @@ defineProps<{
             </td>
             <td class="px-6 py-4 text-sm text-gray-900 w-1/8">
               <div class="flex flex-col items-start space-y-1">
-                <button class="text-blue-600 hover:text-blue-800">
+                <button
+                  @click.stop="$router.push({ name: 'recipe-edit', params: { id: recipe.id } })"
+                  class="text-blue-600 hover:text-blue-800"
+                >
                   Edit
                 </button>
-                <button class="text-red-600 hover:text-red-800">
+                <button
+                  @click.stop="deleteRecipe(recipe.id)"
+                  class="text-red-600 hover:text-red-800"
+                >
                   Delete
                 </button>
               </div>

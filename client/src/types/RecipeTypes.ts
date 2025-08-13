@@ -1,5 +1,5 @@
 export interface Recipe {
-  id: number
+  id: string
   recipe_name: string
   description?: string
   image?: string
