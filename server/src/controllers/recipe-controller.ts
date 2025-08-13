@@ -19,11 +19,29 @@ export async function getRecipeById(req: Request, res: Response) {
   }
 }
 
-export async function addRecipe(req: Request, res: Response) {
+export async function createRecipe(req: Request, res: Response) {
   try {
-    const newRecipe = await RecipeModel.createRecipe(req.body)
+    const newRecipe = await RecipeModel.storeRecipe(req.body)
     res.status(201).json(newRecipe)
   } catch (err) {
     res.status(500).json({ error: 'Failed to create recipe' })
+  }
+}
+
+export async function editRecipe(req: Request, res: Response) {
+  try {
+    const updatedRecipe = await RecipeModel.updateRecipe(req.params.id, req.body)
+    res.json(updatedRecipe)
+  } catch (err) {
+    res.status(500).json({ error: `Failed to update recipe with ID ${req.params.id}` })
+  }
+}
+
+export async function deleteRecipe(req: Request, res: Response) {
+  try {
+    await RecipeModel.destroyRecipe(req.params.id)
+    res.status(204).send()
+  } catch (err) {
+    res.status(500).json({ error: `Failed to delete recipe with ID ${req.params.id}` })
   }
 }

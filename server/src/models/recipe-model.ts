@@ -102,16 +102,6 @@ export async function getRecipeById(id: string) {
   }
 }
 
-export async function createRecipe(details: Recipe) {
-  const { recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, created_at, updated_at } = details
-  return await db.one(
-    `INSERT INTO recipes(
-      recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, created_at, updated_at
-    ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, recipe_name, created_at`,
-    [recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, created_at, updated_at]
-  )
-}
-
 export async function getRecipeCategories(recipeId: string) {
   return await db.any(
     `SELECT c.id, c.name FROM categories c
@@ -119,4 +109,37 @@ export async function getRecipeCategories(recipeId: string) {
       WHERE rc.recipe_id = $1`,
     [recipeId]
   )
+}
+
+export async function storeRecipe(details: Recipe) {
+  const { recipe_name, description, image, source, steps, prep_time, cook_time, user_rating } = details
+  return await db.one(
+    `INSERT INTO recipes(
+      recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, created_at, updated_at
+    ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()) RETURNING id, recipe_name, created_at`,
+    [recipe_name, description, image, source, steps, prep_time, cook_time, user_rating]
+  )
+}
+
+export async function updateRecipe(id: string, details: Partial<Recipe>) {
+  const { recipe_name, description, image, source, steps, prep_time, cook_time, user_rating } = details
+  return await db.one(
+    `UPDATE recipes SET
+      recipe_name = $1,
+      description = $2,
+      image = $3,
+      source = $4,
+      steps = $5,
+      prep_time = $6,
+      cook_time = $7,
+      user_rating = $8,
+      updated_at = NOW()
+    WHERE id = $9
+    RETURNING id, recipe_name, updated_at`,
+    [recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, id]
+  )
+}
+
+export async function destroyRecipe(id: string) {
+  await db.none(`DELETE FROM recipes WHERE id = $1`, [id])
 }

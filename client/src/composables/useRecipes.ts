@@ -3,6 +3,7 @@ import * as recipeService from '@/services/recipeService'
 import type { Recipe } from '@/types/RecipeTypes'
 
 const recipes = ref<Recipe[]>([])
+const singleRecipe = ref<Recipe | null>(null)
 
 export function useRecipes() {
   async function fetchRecipes() {
@@ -10,8 +11,33 @@ export function useRecipes() {
     recipes.value = data
   }
 
+  async function fetchRecipe(id: string) {
+    const data = await recipeService.getRecipeById(id)
+    singleRecipe.value = data
+  }
+
+  async function addRecipe(payload: any) {
+    await recipeService.createRecipe(payload)
+    await fetchRecipes()
+  }
+
+  async function editRecipe(recipeId: string, inputData: Recipe) {
+    await recipeService.updateRecipe(recipeId, inputData)
+    await fetchRecipes()
+  }
+
+  async function deleteRecipe(recipeId: string) {
+    await recipeService.deleteRecipe(recipeId)
+    await fetchRecipes()
+  }
+
   return {
     recipes,
-    fetchRecipes
+    singleRecipe,
+    fetchRecipes,
+    fetchRecipe,
+    addRecipe,
+    editRecipe,
+    deleteRecipe
   }
 }
