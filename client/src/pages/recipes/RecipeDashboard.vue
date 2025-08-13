@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import { Plus } from 'lucide-vue-next'
+import { getRecipes } from '@/services/recipeService'
 import Dashboard from '@/layouts/Dashboard.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import RecipeResults from '@/components/recipes/dashboard/RecipeResults.vue'
@@ -13,7 +13,6 @@ const selectedCategory = ref('')
 const selectedTotalTime = ref('')
 const sortBy = ref('name')
 const selectedRecipe = ref<Recipe | null>(null)
-
 const recipes = ref<Recipe[]>([])
 
 const filteredRecipes = computed(() => {
@@ -67,9 +66,10 @@ const closeRecipe = () => {
 }
 
 onMounted(async () => {
-  const res = await fetch('http://localhost:3000/api/recipes')
-  if (res.ok) {
-    recipes.value = await res.json()
+  try {
+    recipes.value = await getRecipes()
+  } catch (error) {
+    console.error('Error fetching recipes:', error)
   }
 })
 </script>
