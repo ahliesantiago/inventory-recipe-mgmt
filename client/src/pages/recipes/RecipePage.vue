@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ExternalLink, Maximize2, Minimize2, Edit, ShoppingBasket, Star, Trash2, X } from 'lucide-vue-next'
 import { useRecipes } from '@/composables/useRecipes'
@@ -13,6 +13,8 @@ const { deleteRecipe, fetchRecipe, singleRecipe } = useRecipes()
 
 const loading = ref(true)
 const error = ref<string | null>(null)
+const isHeaderSticky = ref(false)
+const isMobile = ref(false)
 
 const loadRecipe = async () => {
   try {
@@ -41,12 +43,69 @@ const handleEdit = () => {
   router.push({ name: 'recipe-edit', params: { id: singleRecipe.value.id } })
 }
 
+// Check if the page has been scrolled past the header's original position; account for mobile header height on mobile devices
+const handleScroll = () => {
+  const scrollY = window.scrollY
+  const mobileHeaderHeight = window.innerWidth < 1024 ? 60 : 0
+  const threshold = 100 + mobileHeaderHeight
+
+  isHeaderSticky.value = scrollY > threshold
+  isMobile.value = window.innerWidth < 1024
+}
+
+const stickyHeaderStyles = computed(() => ({
+  top: isMobile.value ? '60px' : '0',
+  left: isMobile.value ? '0' : 'var(--sidebar-width, 80px)'
+}))
+
 onMounted(() => {
   loadRecipe()
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
 <template>
+  <!-- Sticky Header (shows when scrolling) -->
+  <div
+    v-if="singleRecipe && isHeaderSticky"
+    class="fixed top-0 lg:left-20 right-0 bg-blue-50 border-b border-blue-200 p-4 lg:p-6 transition-all duration-300 ease-in-out"
+    :style="stickyHeaderStyles"
+  >
+    <div class="max-w-6xl mx-auto flex items-start justify-between">
+      <div>
+        <h1 class="text-xl lg:text-2xl font-bold text-gray-900 line-clamp-1">{{ singleRecipe.recipe_name }}</h1>
+        <button
+          @click="router.push({ name: 'recipes' })"
+          class="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
+        >
+          ← Back to Recipes
+        </button>
+      </div>
+      <div class="flex space-x-2">
+        <button
+          @click="handleEdit"
+          class="px-3 py-2 text-sm bg-blue-50 text-blue-700 hover:bg-blue-200 rounded-md border border-blue-200 lg:border-0 transition-colors flex items-center gap-2"
+        >
+          <Edit class="h-4 w-4" />
+          <span class="hidden sm:inline">Edit</span>
+        </button>
+        <button
+          @click="router.push({ name: 'recipes' })"
+          class="p-2 hover:bg-gray-100 rounded-md transition-colors"
+        >
+          <X class="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacer to prevent content jump when header becomes sticky -->
+  <div v-if="isHeaderSticky" class="h-20 lg:h-24"></div>
+
   <Dashboard>
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center min-h-[400px]">
@@ -69,9 +128,17 @@ onMounted(() => {
     <!-- Recipe Content -->
     <div v-else-if="singleRecipe" class="max-w-6xl mx-auto">
       <!-- Recipe Header -->
-      <!-- TODO: extend horizontally and become sticky when scrolling -->
       <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 space-y-4">
-        <h1 class="text-3xl lg:text-4xl font-bold text-gray-900">{{ singleRecipe.recipe_name }}</h1>
+        <div class="flex items-start justify-between">
+          <h1 class="text-3xl lg:text-4xl font-bold text-gray-900">{{ singleRecipe.recipe_name }}</h1>
+          <button
+            @click="handleEdit"
+            class="px-3 py-2 text-sm bg-blue-50 text-blue-700 hover:bg-blue-200 rounded-md border border-blue-200 lg:border-0 transition-colors flex items-center gap-2"
+          >
+            <Edit class="h-4 w-4" />
+            <span class="hidden sm:inline">Edit</span>
+          </button>
+        </div>
         <button
           @click="router.push({ name: 'recipes' })"
           class="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
@@ -119,35 +186,15 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4 justify-between items-center md:items-start">
-              <!-- Categories -->
-              <div v-if="(singleRecipe.categories?.length ?? 0) > 0" class="flex flex-wrap gap-2">
-                <span
-                  v-for="category in singleRecipe.categories"
-                  :key="category"
-                  class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
-                >
-                  {{ category }}
-                </span>
-              </div>
-
-              <!-- Actions -->
-              <div class="flex space-x-2">
-                <button
-                  @click="handleEdit"
-                  class="px-3 py-2 text-sm bg-blue-50 text-blue-700 hover:bg-blue-200 rounded-md border border-blue-200 transition-colors flex items-center gap-2"
-                >
-                  <Edit class="h-4 w-4" />
-                  Edit
-                </button>
-                <button
-                  @click="handleDelete"
-                  class="px-3 py-2 text-sm bg-red-50 text-red-700 hover:bg-red-200 rounded-md border border-red-200 transition-colors flex items-center gap-2"
-                >
-                  <Trash2 class="h-4 w-4" />
-                  Delete
-                </button>
-              </div>
+            <!-- Categories -->
+            <div v-if="(singleRecipe.categories?.length ?? 0) > 0" class="flex flex-wrap gap-2">
+              <span
+                v-for="category in singleRecipe.categories"
+                :key="category"
+                class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+              >
+                {{ category }}
+              </span>
             </div>
 
             <!-- History -->
@@ -165,7 +212,7 @@ onMounted(() => {
           <p class="text-gray-700 whitespace-pre-line">{{ singleRecipe.description }}</p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-x-4 px-2">
+        <div class="flex flex-col sm:flex-row gap-4 px-2">
           <!-- Ingredients -->
           <div class="flex-1">
             <div class="min-h-[2.5rem] flex items-center justify-between mb-4 flex-wrap md:flex-nowrap gap-2">
@@ -227,6 +274,13 @@ onMounted(() => {
             {{ singleRecipe.source }}
           </a>
         </div>
+
+        <button
+          @click="handleDelete"
+          class="px-3 text-sm italic text-red-400 hover:text-red-600 transition-colors"
+        >
+          Delete this recipe.
+        </button>
       </div>
     </div>
   </Dashboard>
