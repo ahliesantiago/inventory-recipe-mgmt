@@ -1,4 +1,3 @@
-(workshopping names)
 # RHIGSLI (Recipes, Home Inventory, and Grocery/Shopping Lists)
 
 A web application for organizing your kitchen and household items and inventory, with and recipe and grocery or shopping list management features. RHIGSLI helps you keep track of what you have at home, find recipes based on available ingredients, create smart shopping lists, and streamline meal planning. This all-in-one solution is meant to simplify your household management by connecting your inventory with your cooking and shopping activities.

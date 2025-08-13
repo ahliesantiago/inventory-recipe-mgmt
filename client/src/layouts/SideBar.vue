@@ -30,8 +30,8 @@ const toggleSidebar = () => {
         class="w-full flex items-center justify-center lg:justify-start p-2 rounded-md hover:bg-gray-100 transition-colors"
       >
         <Menu class="h-6 w-6 text-gray-600" />
-        <span v-if="sidebarExpanded" class="ml-3 text-lg font-semibold text-gray-900">
-          Recipe Manager
+        <span v-if="sidebarExpanded" class="ml-3 text-xl font-semibold text-gray-900">
+          RHIGS
         </span>
       </button>
     </div>

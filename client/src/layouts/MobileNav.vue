@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Menu } from 'lucide-vue-next'
 import { navigationItems } from '@/lib/constants/navigation'
 
 const route = useRoute()
+const router = useRouter()
 const isActive = (id: string) => {
   return computed(() => route.name === id).value
 }
@@ -29,7 +30,9 @@ const closeMobileSidebar = () => {
     >
       <Menu class="h-6 w-6" />
     </button>
-    <h1 class="text-lg font-semibold text-gray-900">Recipe Manager</h1>
+    <h1 class="text-lg font-semibold text-gray-900" @click="router.push({ name: 'home' })">
+      RHIGS
+    </h1>
     <div class="w-10"></div> <!-- Spacer for centering -->
   </header>
 
@@ -56,7 +59,7 @@ const closeMobileSidebar = () => {
       <nav class="p-4">
         <ul class="space-y-2">
           <li v-for="item in navigationItems" :key="item.id">
-            <outer-link
+            <router-link
               :to="{ name: item.id }"
               :class="[
                 'w-full flex items-center p-4 rounded-md transition-colors text-left',
@@ -67,7 +70,7 @@ const closeMobileSidebar = () => {
             >
               <component :is="item.icon" class="h-6 w-6 flex-shrink-0" />
               <span class="ml-4 text-base font-medium">{{ item.label }}</span>
-            </outer-link>
+            </router-link>
           </li>
         </ul>
       </nav>
