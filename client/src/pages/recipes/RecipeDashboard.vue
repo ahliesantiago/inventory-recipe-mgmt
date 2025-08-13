@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import { getRecipes } from '@/services/recipeService'
+import { useRecipes } from '@/composables/useRecipes'
 import Dashboard from '@/layouts/Dashboard.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import RecipeResults from '@/components/recipes/dashboard/RecipeResults.vue'
 import RecipePage from './RecipePage.vue'
 import type { Recipe } from '@/types/RecipeTypes'
+
+const { fetchRecipes, recipes } = useRecipes()
 
 const recipeView = ref<'cards' | 'list'>('cards')
 const searchQuery = ref('')
@@ -13,7 +15,6 @@ const selectedCategory = ref('')
 const selectedTotalTime = ref('')
 const sortBy = ref('name')
 const selectedRecipe = ref<Recipe | null>(null)
-const recipes = ref<Recipe[]>([])
 
 const filteredRecipes = computed(() => {
   let filtered = recipes.value
@@ -39,6 +40,10 @@ const filteredRecipes = computed(() => {
   }
 
   // Sort
+  if (!filtered || filtered.length === 0) {
+    return []
+  }
+
   filtered.sort((a, b) => {
     switch (sortBy.value) {
       case 'name':
@@ -65,12 +70,8 @@ const closeRecipe = () => {
   selectedRecipe.value = null
 }
 
-onMounted(async () => {
-  try {
-    recipes.value = await getRecipes()
-  } catch (error) {
-    console.error('Error fetching recipes:', error)
-  }
+onMounted(() => {
+  fetchRecipes()
 })
 </script>
 
@@ -141,7 +142,7 @@ onMounted(async () => {
     </div>
 
     <RecipeResults
-      :recipeCount="recipes.length"
+      :recipeCount="recipes ? recipes.length : 0"
       :recipeView="recipeView"
       :filteredRecipes="filteredRecipes"
       :openRecipe="openRecipe"
