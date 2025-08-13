@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Menu } from 'lucide-vue-next'
 import { navigationItems } from '@/lib/constants/navigation'
@@ -13,13 +13,21 @@ const sidebarExpanded = ref(false)
 const toggleSidebar = () => {
   sidebarExpanded.value = !sidebarExpanded.value
 }
+
+// Compute sidebar width and update CSS custom property
+const sidebarWidth = computed(() => sidebarExpanded.value ? '256px' : '80px')
+
+// Update CSS custom property when sidebar width changes
+watch(sidebarWidth, (newWidth) => {
+  document.documentElement.style.setProperty('--sidebar-width', newWidth)
+}, { immediate: true })
 </script>
 
 <template>
   <!-- Desktop Sidebar -->
   <aside
     :class="[
-      'hidden lg:min-h-screen lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ease-in-out',
+      'hidden lg:fixed lg:top-0 lg:left-0 lg:h-screen lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ease-in-out',
       sidebarExpanded ? 'w-64' : 'w-20'
     ]"
   >

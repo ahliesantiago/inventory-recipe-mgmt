@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Menu } from 'lucide-vue-next'
+import { Menu, X } from 'lucide-vue-next'
 import { navigationItems } from '@/lib/constants/navigation'
 
 const route = useRoute()
@@ -19,6 +19,12 @@ const toggleMobileSidebar = () => {
 const closeMobileSidebar = () => {
   mobileSidebarOpen.value = false
 }
+
+// Set mobile header height as CSS custom property
+onMounted(() => {
+  // Mobile header height: py-3 (12px * 2) + content height (~24px) = ~48px
+  document.documentElement.style.setProperty('--mobile-header-height', '60px')
+})
 </script>
 
 <template>
@@ -30,7 +36,7 @@ const closeMobileSidebar = () => {
     >
       <Menu class="h-6 w-6" />
     </button>
-    <h1 class="text-lg font-semibold text-gray-900" @click="router.push({ name: 'home' })">
+    <h1 class="text-lg font-semibold text-gray-900 cursor-pointer" @click="router.push({ name: 'home' })">
       RHIGS
     </h1>
     <div class="w-10"></div> <!-- Spacer for centering -->
@@ -40,7 +46,7 @@ const closeMobileSidebar = () => {
   <!-- Mobile Sidebar Overlay -->
   <div
     v-if="mobileSidebarOpen"
-    class="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+    class="lg:hidden fixed inset-0 bg-black bg-opacity-50"
     @click="closeMobileSidebar"
   >
     <aside class="w-full h-full bg-white">
