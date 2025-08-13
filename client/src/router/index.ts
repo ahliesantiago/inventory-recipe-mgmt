@@ -5,6 +5,7 @@ import ItemDashboard from '@/pages/items/ItemDashboard.vue'
 import ListDashboard from '@/pages/lists/ListDashboard.vue'
 import RecipeDashboard from '@/pages/recipes/RecipeDashboard.vue'
 import RecipeFormPage from '@/pages/recipes/RecipeFormPage.vue'
+import RecipePage from '@/pages/recipes/RecipePage.vue'
 
 const routes = [
   { path: '/', name: 'home', component: Home },
@@ -14,6 +15,7 @@ const routes = [
   { path: '/recipes', name: 'recipes', component: RecipeDashboard },
 
   { path: '/recipes/add', name: 'recipe-add', component: RecipeFormPage },
+  { path: '/recipes/:id', name: 'recipe-view', component: RecipePage },
   { path: '/recipes/:id/edit', name: 'recipe-edit', component: RecipeFormPage }
 ]
 const router = createRouter({

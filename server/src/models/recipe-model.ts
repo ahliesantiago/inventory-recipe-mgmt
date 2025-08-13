@@ -98,7 +98,7 @@ export async function getRecipeById(id: string) {
     ...recipe,
     prep_time: timeStringToMinutes(recipe.prep_time),
     cook_time: timeStringToMinutes(recipe.cook_time),
-    total_time: recipe.prep_time + recipe.cook_time,
+    total_time: getTotalTime(recipe.prep_time, recipe.cook_time),
   }
 }
 

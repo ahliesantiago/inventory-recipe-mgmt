@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Plus } from 'lucide-vue-next'
 import { useRecipes } from '@/composables/useRecipes'
 import Dashboard from '@/layouts/Dashboard.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import RecipeResults from '@/components/recipes/dashboard/RecipeResults.vue'
-import RecipePage from './RecipePage.vue'
 import type { Recipe } from '@/types/RecipeTypes'
 
+const router = useRouter()
 const { fetchRecipes, recipes } = useRecipes()
 
 const recipeView = ref<'cards' | 'list'>('cards')
@@ -15,7 +16,6 @@ const searchQuery = ref('')
 const selectedCategory = ref('')
 const selectedTotalTime = ref('')
 const sortBy = ref('name')
-const selectedRecipe = ref<Recipe | null>(null)
 
 const filteredRecipes = computed(() => {
   let filtered = recipes.value
@@ -63,12 +63,8 @@ const filteredRecipes = computed(() => {
   return filtered
 })
 
-const openRecipe = (recipe: any) => {
-  selectedRecipe.value = recipe
-}
-
-const closeRecipe = () => {
-  selectedRecipe.value = null
+const openRecipe = (recipe: Recipe) => {
+  router.push({ name: 'recipe-view', params: { id: recipe.id } })
 }
 
 onMounted(() => {
@@ -149,12 +145,6 @@ onMounted(() => {
       :openRecipe="openRecipe"
     />
   </Dashboard>
-
-  <RecipePage
-    v-if="selectedRecipe"
-    :selectedRecipe="selectedRecipe"
-    :closeRecipe="closeRecipe"
-  />
 
   <!-- Dashboard Floating Add Button -->
   <button
