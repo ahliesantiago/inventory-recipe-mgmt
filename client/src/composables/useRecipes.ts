@@ -3,9 +3,10 @@ import * as recipeService from '@/services/recipeService'
 import type { Recipe } from '@/types/RecipeTypes'
 
 const recipes = ref<Recipe[]>([])
-const singleRecipe = ref<Recipe | null>(null)
 
 export function useRecipes() {
+  const singleRecipe = ref<Recipe | null>(null)
+
   async function fetchRecipes() {
     const data = await recipeService.getRecipes()
     recipes.value = data
