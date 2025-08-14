@@ -13,6 +13,7 @@ const { deleteRecipe, fetchRecipe, singleRecipe } = useRecipes()
 
 const loading = ref(true)
 const error = ref<string | null>(null)
+const confirmDelete = ref(false)
 const isHeaderSticky = ref(false)
 const isMobile = ref(false)
 const headerRef = ref<HTMLElement | null>(null)
@@ -321,12 +322,21 @@ onUnmounted(() => {
           </a>
         </div>
 
-        <button
-          @click="handleDelete"
-          class="px-3 text-sm italic text-red-400 hover:text-red-600 transition-colors"
-        >
-          Delete this recipe.
-        </button>
+        <div class="flex justify-end">
+          <button
+            @click="handleDelete"
+            :class="['px-3 text-sm italic text-red-400 hover:text-red-600 transition-colors', !confirmDelete ? 'hidden' : '']"
+          >
+            Delete this recipe.
+          </button>
+          <button
+            @click="confirmDelete ? confirmDelete = false : confirmDelete = true"
+            class="px-3 py-2 text-sm bg-red-50 text-red-700 hover:bg-red-200 rounded-md border border-red-200 lg:border-0 transition-colors flex items-center gap-2"
+          >
+            <Trash2 :class="['h-4 w-4', confirmDelete ? 'hidden' : '']" />
+            <X :class="['h-4 w-4', confirmDelete ? '' : 'hidden']" />
+          </button>
+        </div>
       </div>
     </div>
   </Dashboard>
