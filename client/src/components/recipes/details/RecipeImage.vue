@@ -3,7 +3,7 @@ import { CupSoda, Popcorn, UtensilsCrossed } from 'lucide-vue-next'
 
 const props = defineProps<{
   hasImage: boolean
-  recipeImage?: string
+  recipeImage?: string | null
   recipeName: string
   imgStyles?: string
   category?: Category,
@@ -22,7 +22,7 @@ const Icon = iconMap[props.category ?? 'meal'] ?? UtensilsCrossed
 
 <template>
   <img
-    v-if="hasImage"
+    v-if="hasImage && recipeImage"
     :src="recipeImage"
     :alt="recipeName"
     class="w-full object-cover"

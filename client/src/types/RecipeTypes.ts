@@ -1,15 +1,15 @@
 export interface Recipe {
   id: string
   recipe_name: string
-  description?: string
-  image?: string
-  source?: string
+  description: string | null
+  image: string | null
+  source: string | null
   steps: string[]
   prep_time: number
   cook_time: number
   total_time: number // derived
-  user_rating?: number
-  categories?: string[] // derived
+  user_rating: number
+  categories: string[] // derived
   ingredients: RecipeIngredients[] // derived
   created_at: Date
   updated_at: Date
