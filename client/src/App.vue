@@ -38,6 +38,7 @@ import SideBar from './layouts/SideBar.vue'
   flex-shrink: 0; /* Prevent header from shrinking */
   position: sticky;
   top: 0;
+  z-index: 50;
 }
 
 .main-content-area {
