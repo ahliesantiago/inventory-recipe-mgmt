@@ -69,40 +69,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- Sticky Header (shows when scrolling) -->
-  <div
-    v-if="singleRecipe && isHeaderSticky"
-    class="fixed top-0 lg:left-20 right-0 bg-blue-50 border-b border-blue-200 p-4 lg:p-6 transition-all duration-300 ease-in-out"
-    :style="stickyHeaderStyles"
-  >
-    <div class="max-w-6xl mx-auto flex items-start justify-between">
-      <div>
-        <h1 class="text-xl lg:text-2xl font-bold text-gray-900 line-clamp-1">{{ singleRecipe.recipe_name }}</h1>
-        <button
-          @click="router.push({ name: 'recipes' })"
-          class="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
-        >
-          ← Back to Recipes
-        </button>
-      </div>
-      <div class="flex space-x-2">
-        <button
-          @click="handleEdit"
-          class="px-3 py-2 text-sm bg-blue-50 text-blue-700 hover:bg-blue-200 rounded-md border border-blue-200 lg:border-0 transition-colors flex items-center gap-2"
-        >
-          <Edit class="h-4 w-4" />
-          <span class="hidden sm:inline">Edit</span>
-        </button>
-        <button
-          @click="router.push({ name: 'recipes' })"
-          class="p-2 hover:bg-gray-100 rounded-md transition-colors"
-        >
-          <X class="h-5 w-5" />
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Spacer to prevent content jump when header becomes sticky -->
   <div v-if="isHeaderSticky" class="h-20 lg:h-24"></div>
 
@@ -128,23 +94,53 @@ onUnmounted(() => {
     <!-- Recipe Content -->
     <div v-else-if="singleRecipe" class="max-w-6xl mx-auto">
       <!-- Recipe Header -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 space-y-4">
-        <div class="flex items-start justify-between">
-          <h1 class="text-3xl lg:text-4xl font-bold text-gray-900">{{ singleRecipe.recipe_name }}</h1>
-          <button
-            @click="handleEdit"
-            class="px-3 py-2 text-sm bg-blue-50 text-blue-700 hover:bg-blue-200 rounded-md border border-blue-200 lg:border-0 transition-colors flex items-center gap-2"
-          >
-            <Edit class="h-4 w-4" />
-            <span class="hidden sm:inline">Edit</span>
-          </button>
+      <div
+        :class="[
+          'transition-all duration-300 ease-in-out',
+          isHeaderSticky
+            ? 'fixed top-0 lg:left-20 right-0 bg-blue-50 border-b border-blue-200 p-4 lg:p-6 z-50'
+            : 'bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6'
+        ]"
+        :style="isHeaderSticky ? stickyHeaderStyles : {}"
+      >
+        <div :class="isHeaderSticky ? 'max-w-6xl mx-auto' : ''">
+          <div :class="['flex items-start justify-between', isHeaderSticky ? '' : 'space-y-4']">
+            <div>
+              <h1
+                :class="[
+                  'font-bold text-gray-900',
+                  isHeaderSticky
+                    ? 'text-xl lg:text-2xl line-clamp-1'
+                    : 'text-3xl lg:text-4xl'
+                ]"
+              >
+                {{ singleRecipe.recipe_name }}
+              </h1>
+              <button
+                @click="router.push({ name: 'recipes' })"
+                class="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
+              >
+                ← Back to Recipes
+              </button>
+            </div>
+            <div class="flex space-x-2">
+              <button
+                @click="handleEdit"
+                class="px-3 py-2 text-sm bg-blue-50 text-blue-700 hover:bg-blue-200 rounded-md border border-blue-200 lg:border-0 transition-colors flex items-center gap-2"
+              >
+                <Edit class="h-4 w-4" />
+                <span class="hidden sm:inline">Edit</span>
+              </button>
+              <button
+                v-if="isHeaderSticky"
+                @click="router.push({ name: 'recipes' })"
+                class="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              >
+                <X class="h-5 w-5" />
+              </button>
+            </div>
+          </div>
         </div>
-        <button
-          @click="router.push({ name: 'recipes' })"
-          class="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
-        >
-          ← Back to Recipes
-        </button>
       </div>
 
       <!-- Recipe Body -->
