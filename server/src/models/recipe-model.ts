@@ -89,7 +89,7 @@ export async function getRecipeById(id: string) {
         JOIN units unt ON ri.unit_id = unt.id
         GROUP BY ri.recipe_id
     ) ings ON ings.recipe_id = r.id
-    WHERE r.id = 1;
+    WHERE r.id = $1;
   `, [id])
 
   if (!recipe) return null
