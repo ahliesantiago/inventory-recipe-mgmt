@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ExternalLink, Maximize2, Minimize2, Edit, ShoppingBasket, Star, Trash2, X } from 'lucide-vue-next'
+import { ExternalLink, Edit, ShoppingBasket, Star, Trash2, X } from 'lucide-vue-next'
 import { useRecipes } from '@/composables/useRecipes'
 import Dashboard from '@/layouts/Dashboard.vue'
 import RecipeImage from '@/components/recipes/details/RecipeImage.vue'
@@ -15,6 +15,9 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const isHeaderSticky = ref(false)
 const isMobile = ref(false)
+const headerRef = ref<HTMLElement | null>(null)
+const headerHeight = ref(0)
+const originalHeaderTop = ref(0)
 
 const loadRecipe = async () => {
   try {
@@ -43,13 +46,48 @@ const handleEdit = () => {
   router.push({ name: 'recipe-edit', params: { id: singleRecipe.value.id } })
 }
 
+// Capture the original position when the component is mounted and header is in normal state
+const captureOriginalPosition = () => {
+  if (!headerRef.value) return
+
+  const rect = headerRef.value.getBoundingClientRect()
+  originalHeaderTop.value = window.scrollY + rect.top
+  headerHeight.value = rect.height
+}
+
+/**
+ * Throttles scroll event handling using requestAnimationFrame for better performance.
+ * Prevents excessive handleScroll calls during rapid scrolling by limiting execution to once per animation frame.
+ */
+let scrollTimeout: number | null = null
+const throttledHandleScroll = () => {
+  if (scrollTimeout) return
+
+  scrollTimeout = requestAnimationFrame(() => {
+    handleScroll()
+    scrollTimeout = null
+  })
+}
+
 // Check if the page has been scrolled past the header's original position; account for mobile header height on mobile devices
 const handleScroll = () => {
-  const scrollY = window.scrollY
-  const mobileHeaderHeight = window.innerWidth < 1024 ? 60 : 0
-  const threshold = 100 + mobileHeaderHeight
+  if (!headerRef.value || originalHeaderTop.value === 0) return
 
-  isHeaderSticky.value = scrollY > threshold
+  const scrollY = window.scrollY
+  const mobileHeaderHeight = isMobile.value ? 60 : 0
+  const threshold = originalHeaderTop.value - mobileHeaderHeight
+
+  // Use a larger buffer to prevent rapid toggling
+  const buffer = 20
+
+  if (!isHeaderSticky.value && scrollY > threshold + buffer) {
+    isHeaderSticky.value = true
+  } else if (isHeaderSticky.value && scrollY < threshold - buffer) {
+    isHeaderSticky.value = false
+  }
+}
+
+const updateMobileState = () => {
   isMobile.value = window.innerWidth < 1024
 }
 
@@ -60,17 +98,28 @@ const stickyHeaderStyles = computed(() => ({
 
 onMounted(() => {
   loadRecipe()
-  window.addEventListener('scroll', handleScroll)
+  updateMobileState()
+
+  // Capture original position after a delay to ensure everything is rendered
+  setTimeout(captureOriginalPosition, 200)
+
+  window.addEventListener('scroll', throttledHandleScroll, { passive: true })
+  window.addEventListener('resize', updateMobileState, { passive: true })
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('scroll', throttledHandleScroll)
+  window.removeEventListener('resize', updateMobileState)
+
+  if (scrollTimeout) {
+    cancelAnimationFrame(scrollTimeout)
+  }
 })
 </script>
 
 <template>
-  <!-- Spacer to prevent content jump when header becomes sticky -->
-  <div v-if="isHeaderSticky" class="h-20 lg:h-24"></div>
+    <!-- Spacer to prevent content jump when header becomes sticky -->
+    <div v-if="isHeaderSticky" :style="{ height: headerHeight + 'px' }"></div>
 
   <Dashboard>
     <!-- Loading State -->
@@ -95,6 +144,7 @@ onUnmounted(() => {
     <div v-else-if="singleRecipe" class="max-w-6xl mx-auto">
       <!-- Recipe Header -->
       <div
+        ref="headerRef"
         :class="[
           'transition-all duration-300 ease-in-out',
           isHeaderSticky
