@@ -159,17 +159,15 @@ onUnmounted(() => {
             <div>
               <h1
                 :class="[
-                  'font-bold text-gray-900',
-                  isHeaderSticky
-                    ? 'text-xl lg:text-2xl line-clamp-1'
-                    : 'text-3xl lg:text-4xl'
+                  'font-bold text-gray-900 text-3xl lg:text-4xl',
+                  isHeaderSticky ? 'line-clamp-1' : ''
                 ]"
               >
                 {{ singleRecipe.recipe_name }}
               </h1>
               <button
                 @click="router.push({ name: 'recipes' })"
-                class="text-blue-500 hover:text-blue-700 text-sm cursor-pointer"
+                class="text-blue-500 hover:text-blue-700 text-sm lg:text-xs cursor-pointer"
               >
                 ← Back to Recipes
               </button>

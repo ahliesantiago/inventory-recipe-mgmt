@@ -3,7 +3,7 @@ import { navigationItems } from '@/lib/constants/navigation'
 </script>
 
 <template>
-  <main class="flex-1 min-h-screen">
+  <section class="flex-1 min-h-screen">
     <div class="p-6 lg:p-8">
       <div class="max-w-4xl mx-auto">
         <div class="text-center mb-8">
@@ -37,5 +37,5 @@ import { navigationItems } from '@/lib/constants/navigation'
         </div>
       </div>
     </div>
-  </main>
+  </section>
 </template>
