@@ -1,5 +1,8 @@
 import db from '../db'
-import type { Recipe } from '../types/recipe-types'
+import { IDatabase, ITask } from 'pg-promise'
+import type { RecipeInputType, RecipeType } from '../types/recipe-types'
+
+type DbOrTx = IDatabase<{}, any> | ITask<{}>
 
 function timeStringToMinutes(timeStr: string): number {
   const [hours, minutes, seconds] = timeStr.split(':').map(Number)
@@ -35,7 +38,7 @@ export async function getAllRecipes() {
                     'unit_plural', unt.unit_plural_name,
                     'unit_acronym', unt.unit_acronym,
                     'unit_plural_acronym', unt.unit_plural_acronym,
-                    'qty', ri.quantity
+                    'quantity', ri.quantity
                 )
                 ORDER BY itm.item_name
             ) AS ingredients
@@ -80,7 +83,7 @@ export async function getRecipeById(id: string) {
                     'unit_plural', unt.unit_plural_name,
                     'unit_acronym', unt.unit_acronym,
                     'unit_plural_acronym', unt.unit_plural_acronym,
-                    'qty', ri.quantity
+                    'quantity', ri.quantity
                 )
                 ORDER BY itm.item_name
             ) AS ingredients
@@ -111,9 +114,9 @@ export async function getRecipeCategories(recipeId: string) {
   )
 }
 
-export async function storeRecipe(details: Recipe) {
+export async function storeRecipe(details: RecipeInputType, tOrDb: DbOrTx = db) {
   const { recipe_name, description, image, source, steps, prep_time, cook_time, user_rating } = details
-  return await db.one(
+  return await tOrDb.one(
     `INSERT INTO recipes(
       recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, created_at, updated_at
     ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()) RETURNING id, recipe_name, created_at`,
@@ -121,7 +124,7 @@ export async function storeRecipe(details: Recipe) {
   )
 }
 
-export async function updateRecipe(id: string, details: Partial<Recipe>) {
+export async function updateRecipe(id: string, details: Partial<RecipeType>) {
   const { recipe_name, description, image, source, steps, prep_time, cook_time, user_rating } = details
   return await db.one(
     `UPDATE recipes SET

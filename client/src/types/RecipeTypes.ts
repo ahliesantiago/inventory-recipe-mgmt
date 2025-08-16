@@ -18,8 +18,8 @@ export interface Recipe {
 export interface RecipeIngredients {
   ingredient: string
   unit: string
-  unit_plural: string
-  unit_acronym: string
-  unit_plural_acronym: string
-  qty: number
+  unit_plural?: string
+  unit_acronym?: string
+  unit_plural_acronym?: string
+  quantity: number
 }

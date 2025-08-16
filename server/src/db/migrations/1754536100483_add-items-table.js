@@ -12,7 +12,7 @@ export const up = (pgm) => {
   pgm.createTable('items', {
     id: 'id', // shorthand for id: { type: 'bigserial', primaryKey: true }
     item_name: { type: 'text', notNull: true, unique: true },
-    plural_name: { type: 'text', notNull: true },
+    plural_name: { type: 'text', notNull: false },
     is_ingredient: { type: 'boolean', notNull: true },
     is_food_equipment: { type: 'boolean', notNull: false },
     created_at: { type: 'timestamp', default: pgm.func('now()') },
