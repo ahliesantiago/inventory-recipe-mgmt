@@ -12,7 +12,8 @@
     "migrate:reset": "node-pg-migrate reset -m src/db/migrations -c database.js -e development",
     "migrate:status": "node-pg-migrate status -m src/db/migrations -c database.js -e development",
     "seed": "ts-node src/db/seeds/seed.ts",
-    "test": "jest"
+    "test": "jest",
+    "type-check": "tsc --no-Emit"
   },
   "repository": {
     "type": "git",
