@@ -5,8 +5,10 @@ import { Trash } from 'lucide-vue-next'
 // @ts-ignore
 import StarRating from 'vue-star-rating'
 import { useRecipes } from '@/composables/useRecipes'
+import { useIngredientsStore } from '@/stores/ingredients'
 import type { Recipe } from '@/types/RecipeTypes'
 
+const ingredientsStore = useIngredientsStore()
 const { addRecipe, editRecipe, fetchRecipe, singleRecipe } = useRecipes()
 const route = useRoute()
 const router = useRouter()

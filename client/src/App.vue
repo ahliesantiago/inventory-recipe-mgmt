@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useIngredientsStore } from './stores/ingredients'
 import MobileNav from './layouts/MobileNav.vue'
 import SideBar from './layouts/SideBar.vue'
+
+const ingredientsStore = useIngredientsStore()
+
+onMounted(() => {
+  ingredientsStore.fetchIngredients()
+})
 </script>
 
 <template>
