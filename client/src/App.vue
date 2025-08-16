@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useIngredientsStore } from './stores/ingredients'
+import { useUnitsStore } from '@/stores/units'
 import MobileNav from './layouts/MobileNav.vue'
 import SideBar from './layouts/SideBar.vue'
 
 const ingredientsStore = useIngredientsStore()
+const unitsStore = useUnitsStore()
 
 onMounted(() => {
   ingredientsStore.fetchIngredients()
+  unitsStore.fetchUnits()
 })
 </script>
 

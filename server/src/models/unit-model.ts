@@ -5,6 +5,12 @@ import { UnitInputType } from '../types/item-types'
 
 type DbOrTx = IDatabase<{}, any> | ITask<{}>
 
+export async function getAllUnits() {
+  return await db.any(`
+    SELECT * FROM units ORDER BY unit_name
+  `)
+}
+
 export async function findUnitByName(unitName: string, tOrDb: DbOrTx = db) {
   return tOrDb.oneOrNone(`
     SELECT * FROM units

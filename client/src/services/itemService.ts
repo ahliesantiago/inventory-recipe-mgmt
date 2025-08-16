@@ -12,6 +12,11 @@ export async function getIngredients() {
   return res.data
 }
 
+export async function getUnits() {
+  const res = await axios.get(`${API_URL}/units`)
+  return res.data
+}
+
 // export async function getItemById(id: string) {
 //   const res = await axios.get(`${API_URL}/${id}`)
 //   return res.data
