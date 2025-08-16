@@ -1,5 +1,6 @@
 import db from '../db'
 import { IDatabase, ITask } from 'pg-promise'
+import { buildInsert } from '../utils/query-builder'
 import type { RecipeInputType, RecipeType } from '../types/recipe-types'
 
 type DbOrTx = IDatabase<{}, any> | ITask<{}>
@@ -114,14 +115,10 @@ export async function getRecipeCategories(recipeId: string) {
   )
 }
 
-export async function storeRecipe(details: RecipeInputType, tOrDb: DbOrTx = db) {
-  const { recipe_name, description, image, source, steps, prep_time, cook_time, user_rating } = details
-  return await tOrDb.one(
-    `INSERT INTO recipes(
-      recipe_name, description, image, source, steps, prep_time, cook_time, user_rating, created_at, updated_at
-    ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW()) RETURNING id, recipe_name, created_at`,
-    [recipe_name, description, image, source, steps, prep_time, cook_time, user_rating]
-  )
+export async function storeRecipe(recipeDetails: RecipeInputType, tOrDb: DbOrTx = db) {
+  const { sql, values } = buildInsert('recipes', recipeDetails)
+
+  return await tOrDb.oneOrNone(sql, values)
 }
 
 export async function updateRecipe(id: string, details: Partial<RecipeType>) {
