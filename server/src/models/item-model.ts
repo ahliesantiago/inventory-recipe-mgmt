@@ -23,15 +23,9 @@ export async function findItemByName(name: string) {
   return item
 }
 
-export async function getAllItems() {
+export async function getAllItems(ingredients_only: boolean = false) {
   return await db.any(`
-    SELECT * FROM items ORDER BY item_name
-  `)
-}
-
-export async function getAllIngredients() {
-  return await db.any(`
-    SELECT * FROM items WHERE is_ingredient = true ORDER BY item_name
+    SELECT * FROM items ${ingredients_only ? 'WHERE is_ingredient = true' : ''} ORDER BY item_name
   `)
 }
 
