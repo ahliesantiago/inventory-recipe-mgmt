@@ -5,6 +5,7 @@ import { Trash } from 'lucide-vue-next'
 // @ts-ignore
 import StarRating from 'vue-star-rating'
 import { useRecipes } from '@/composables/useRecipes'
+import IngredientSearchInput from '@/components/ui/IngredientSearchInput.vue'
 import type { RecipeInputType } from '@/types/RecipeTypes'
 
 const { addRecipe, editRecipe, fetchRecipe, singleRecipe } = useRecipes()
@@ -126,12 +127,12 @@ onMounted(() => {
           <h5 class="text-center">Unit</h5>
         </div>
         <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 space-y-2 items-center" v-for="(ingredient, index) in formData.ingredients" :key="index">
-          <input
-            type="text"
-            v-model="ingredient.ingredient"
-            class="col-span-1 sm:col-span-2 border border-gray-500 rounded p-2 w-full"
-            required
-          />
+          <div class="col-span-1 sm:col-span-2">
+            <IngredientSearchInput
+              v-model="ingredient.ingredient"
+              :required="true"
+            />
+          </div>
           <input
             type="number"
             v-model.number="ingredient.quantity"
