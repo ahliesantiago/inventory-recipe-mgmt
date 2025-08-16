@@ -149,7 +149,7 @@ onMounted(() => {
   <!-- Dashboard Floating Add Button -->
   <button
     @click="$router.push({ name: 'recipe-add' })"
-    class="fixed bottom-6 right-6 bg-[#5fa8d3] hover:bg-[#1b4965] text-white rounded-full p-4 shadow-lg transition-colors z-40"
+    class="fixed bottom-6 right-6 bg-[#5fa8d3] hover:bg-[#1b4965] text-white rounded-full p-4 shadow-lg transition-colors z-10"
   >
     <Plus class="h-6 w-6" />
   </button>

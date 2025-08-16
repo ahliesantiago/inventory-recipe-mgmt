@@ -149,7 +149,7 @@ onUnmounted(() => {
         :class="[
           'transition-all duration-300 ease-in-out',
           isHeaderSticky
-            ? 'fixed top-0 lg:left-20 right-0 bg-blue-50 border-b border-blue-200 p-4 lg:p-6 z-50'
+            ? 'fixed top-0 lg:left-20 right-0 bg-blue-50 border-b border-blue-200 p-4 lg:p-6 z-10'
             : 'bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6'
         ]"
         :style="isHeaderSticky ? stickyHeaderStyles : {}"
@@ -242,10 +242,12 @@ onUnmounted(() => {
               </span>
             </div>
 
+            <!-- Tags -->
+
             <!-- History -->
             <div class="place-self-end">
               <p class="text-xs text-gray-600">
-                <!-- Last prepared on: MMMM D, YYYY (dddd) -->
+                Last prepared on: N/A <!-- MMMM D, YYYY (dddd) -->
               </p>
             </div>
           </div>
@@ -279,7 +281,7 @@ onUnmounted(() => {
                 class="flex items-center text-gray-700 text-sm"
               >
                 <div class="w-[6px] h-[6px] bg-blue-400 mr-3"></div>
-                {{ ingredient.ingredient }} - {{ ingredient.qty }}{{ ingredient.qty > 1 ? ingredient.unit_plural_acronym : ingredient.unit_acronym }}
+                {{ ingredient.ingredient }} - {{ ingredient.quantity }}{{ ingredient.quantity > 1 ? ingredient.unit_plural_acronym : ingredient.unit_acronym }}
               </li>
             </ul>
           </div>
@@ -320,6 +322,9 @@ onUnmounted(() => {
           </a>
         </div>
 
+        <!-- Related or Alternate Recipes -->
+
+        <!-- Delete -->
         <div class="flex justify-end">
           <button
             @click="handleDelete"
