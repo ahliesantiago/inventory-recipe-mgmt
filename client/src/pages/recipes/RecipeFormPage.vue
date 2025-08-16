@@ -122,13 +122,13 @@ onMounted(() => {
 
       <div>
         <label for="steps" class="block font-medium">Ingredients</label>
-        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 mb-2">
-          <h5 class="col-span-1 sm:col-span-2 text-center">Ingredient</h5>
-          <h5 class="text-center">Quantity</h5>
-          <h5 class="text-center">Unit</h5>
+        <div class="grid grid-cols-6 sm:grid-cols-8 gap-4 mb-2">
+          <h5 class="col-span-2 text-center">Ingredient</h5>
+          <h5 class="text-center">Qty</h5>
+          <h5 class="col-span-2 text-center">Unit</h5>
         </div>
-        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 items-center mb-2" v-for="(ingredient, index) in formData.ingredients" :key="index">
-          <div class="col-span-1 sm:col-span-2">
+        <div class="grid grid-cols-6 sm:grid-cols-8 gap-4 items-center mb-2" v-for="(ingredient, index) in formData.ingredients" :key="index">
+          <div class="col-span-2">
             <IngredientSearchInput
               v-model="ingredient.ingredient"
               :required="true"
@@ -141,11 +141,13 @@ onMounted(() => {
             min="1"
             required
           />
-          <UnitSearchInput
-            v-model="ingredient.unit"
-            input-class="col-span-1 border border-gray-500 rounded p-2 w-full"
-            :required="true"
-          />
+          <div class="col-span-2">
+            <UnitSearchInput
+              v-model="ingredient.unit"
+              input-class="border border-gray-500 rounded p-2 w-full"
+              :required="true"
+            />
+          </div>
           <div class="col-span-1 flex justify-start">
             <button
               type="button"
