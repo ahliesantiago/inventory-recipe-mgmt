@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, toRaw, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Trash } from 'lucide-vue-next'
 // @ts-ignore
 import StarRating from 'vue-star-rating'
 import { useRecipes } from '@/composables/useRecipes'
@@ -16,7 +17,6 @@ const recipeId = route.params.id as string | undefined
 const now = new Date()
 const formRef = ref<HTMLFormElement | null>(null)
 const formData = ref<Partial<Recipe>>({
-  id: '',
   recipe_name: '',
   description: null,
   image: null,
@@ -24,12 +24,13 @@ const formData = ref<Partial<Recipe>>({
   steps: [],
   prep_time: 0,
   cook_time: 0,
-  total_time: 0,
   user_rating: 0,
   categories: [],
-  ingredients: [],
-  created_at: now,
-  updated_at: now,
+  ingredients: [{
+    ingredient: '',
+    unit: '',
+    quantity: 0
+  }],
 })
 
 // If editing, pre-fill form when initialData changes
@@ -40,15 +41,15 @@ watch(singleRecipe, (val) => {
 }, { immediate: true })
 
 async function handleSubmit() {
-  console.log('Form data being submitted:', formData)
+  const jsonFormData = toRaw(formData.value)
 
-  // if (isEdit) {
-  //   await editRecipe(route.params.id as string, formData)
-  // } else {
-  //   await addRecipe(formData)
-  // }
+  if (isEdit) {
+    // await editRecipe(route.params.id as string, jsonFormData)
+  } else {
+    await addRecipe(jsonFormData)
+  }
 
-  // router.push({ name: 'recipes' })
+  router.push({ name: 'recipes' })
 }
 
 onMounted(() => {
@@ -111,13 +112,49 @@ onMounted(() => {
         />
       </div>
 
-      <!-- <div>
+      <div>
         <label for="steps" class="block font-medium">Ingredients</label>
-        <textarea
-          id="ingredients"
-          v-model="formData.ingredients"
-          class="border border-gray-500 rounded p-2 w-full"
-        ></textarea>
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 items-center mb-2">
+          <h5 class="col-span-1 sm:col-span-2 text-center">Ingredient</h5>
+          <h5 class="text-center">Quantity</h5>
+          <h5 class="text-center">Unit</h5>
+        </div>
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 space-y-2 items-center" v-for="(ingredient, index) in formData.ingredients" :key="index">
+          <input
+            type="text"
+            v-model="ingredient.ingredient"
+            class="col-span-1 sm:col-span-2 border border-gray-500 rounded p-2 w-full"
+            required
+          />
+          <input
+            type="number"
+            v-model.number="ingredient.quantity"
+            class="col-span-1 border border-gray-500 rounded p-2 w-full"
+            required
+          />
+          <input
+            type="text"
+            v-model.number="ingredient.unit"
+            class="col-span-1 border border-gray-500 rounded p-2 w-full"
+            required
+          />
+          <div class="flex space-x-2">
+            <button
+              type="button"
+              @click="formData.ingredients?.splice(index, 1)"
+              class="bg-red-500 text-white p-2 rounded"
+            >
+              <Trash class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="bg-blue-500 text-white p-2 rounded"
+          @click="formData.ingredients?.push({ ingredient: '', unit: '', quantity: 0 })"
+        >
+          Add Ingredient
+        </button>
       </div>
 
       <div>
@@ -127,7 +164,7 @@ onMounted(() => {
           v-model="formData.steps"
           class="border border-gray-500 rounded p-2 w-full"
         ></textarea>
-      </div> -->
+      </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
@@ -137,6 +174,7 @@ onMounted(() => {
             v-model="formData.prep_time"
             type="time"
             class="border border-gray-500 rounded p-2 w-full"
+            required
           />
         </div>
 
@@ -147,6 +185,7 @@ onMounted(() => {
             v-model="formData.cook_time"
             type="time"
             class="border border-gray-500 rounded p-2 w-full"
+            required
           />
         </div>
       </div>

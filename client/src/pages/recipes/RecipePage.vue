@@ -281,7 +281,12 @@ onUnmounted(() => {
                 class="flex items-center text-gray-700 text-sm"
               >
                 <div class="w-[6px] h-[6px] bg-blue-400 mr-3"></div>
-                {{ ingredient.ingredient }} - {{ ingredient.quantity }}{{ ingredient.quantity > 1 ? ingredient.unit_plural_acronym : ingredient.unit_acronym }}
+                {{ ingredient.ingredient }} - {{ ingredient.quantity }}
+                {{
+                  ingredient.quantity > 1
+                    ? ingredient.unit_plural_acronym ?? ingredient.unit_plural
+                    : ingredient.unit_acronym ?? ingredient.unit
+                }}
               </li>
             </ul>
           </div>
