@@ -5,10 +5,8 @@ import { Trash } from 'lucide-vue-next'
 // @ts-ignore
 import StarRating from 'vue-star-rating'
 import { useRecipes } from '@/composables/useRecipes'
-import { useIngredientsStore } from '@/stores/ingredients'
-import type { Recipe } from '@/types/RecipeTypes'
+import type { RecipeInputType } from '@/types/RecipeTypes'
 
-const ingredientsStore = useIngredientsStore()
 const { addRecipe, editRecipe, fetchRecipe, singleRecipe } = useRecipes()
 const route = useRoute()
 const router = useRouter()
@@ -16,16 +14,14 @@ const router = useRouter()
 const isEdit = route.name === 'recipe-edit' || !!route.params.id
 const recipeId = route.params.id as string | undefined
 
-const now = new Date()
-const formRef = ref<HTMLFormElement | null>(null)
-const formData = ref<Partial<Recipe>>({
+const formData = ref<RecipeInputType>({
   recipe_name: '',
   description: null,
   image: null,
   source: null,
   steps: [],
-  prep_time: 0,
-  cook_time: 0,
+  prep_time: '00:00:00',
+  cook_time: '00:00:00',
   user_rating: 0,
   categories: [],
   ingredients: [{
@@ -38,7 +34,11 @@ const formData = ref<Partial<Recipe>>({
 // If editing, pre-fill form when initialData changes
 watch(singleRecipe, (val) => {
   if (val && isEdit) {
-    formData.value = { ...val }
+    formData.value = {
+      ...val,
+      prep_time: String(val.prep_time) || '00:00:00',
+      cook_time: String(val.cook_time) || '00:00:00',
+    }
   }
 }, { immediate: true })
 
@@ -136,7 +136,7 @@ onMounted(() => {
           />
           <input
             type="text"
-            v-model.number="ingredient.unit"
+            v-model="ingredient.unit"
             class="col-span-1 border border-gray-500 rounded p-2 w-full"
             required
           />
@@ -175,6 +175,7 @@ onMounted(() => {
             id="prep_time"
             v-model="formData.prep_time"
             type="time"
+            step="1"
             class="border border-gray-500 rounded p-2 w-full"
             required
           />
@@ -186,6 +187,7 @@ onMounted(() => {
             id="cook_time"
             v-model="formData.cook_time"
             type="time"
+            step="1"
             class="border border-gray-500 rounded p-2 w-full"
             required
           />

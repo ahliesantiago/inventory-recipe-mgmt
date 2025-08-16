@@ -15,6 +15,19 @@ export interface Recipe {
   updated_at: Date
 }
 
+export interface RecipeInputType {
+  recipe_name: string
+  description: string | null
+  image: string | null
+  source: string | null
+  steps: string[]
+  prep_time: string
+  cook_time: string
+  user_rating: number
+  categories: string[] | null
+  ingredients: RecipeIngredients[]
+}
+
 export interface RecipeIngredients {
   ingredient: string
   unit: string
