@@ -25,7 +25,14 @@ export interface RecipeInputType {
   cook_time: string
   user_rating: number
   categories: string[] | null
-  ingredients: RecipeIngredients[]
+  ingredients: {
+    ingredient: string
+    unit: string
+    unit_plural?: string
+    unit_acronym?: string
+    unit_plural_acronym?: string
+    quantity: number | null
+  }[]
 }
 
 export interface RecipeIngredients {

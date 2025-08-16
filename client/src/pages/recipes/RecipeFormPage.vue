@@ -27,7 +27,7 @@ const formData = ref<RecipeInputType>({
   ingredients: [{
     ingredient: '',
     unit: '',
-    quantity: 0
+    quantity: null
   }],
 })
 
@@ -43,6 +43,10 @@ watch(singleRecipe, (val) => {
 }, { immediate: true })
 
 async function handleSubmit() {
+  // Ensure all ingredients have a quantity
+  formData.value.ingredients.forEach(ingredient => {
+    ingredient.quantity = ingredient.quantity ?? 1
+  })
   const jsonFormData = toRaw(formData.value)
 
   if (isEdit) {
@@ -132,6 +136,7 @@ onMounted(() => {
             type="number"
             v-model.number="ingredient.quantity"
             class="col-span-1 border border-gray-500 rounded p-2 w-full"
+            min="1"
             required
           />
           <input
@@ -153,7 +158,7 @@ onMounted(() => {
         <button
           type="button"
           class="bg-blue-500 text-white p-2 rounded"
-          @click="formData.ingredients?.push({ ingredient: '', unit: '', quantity: 0 })"
+          @click="formData.ingredients?.push({ ingredient: '', unit: '', quantity: null })"
         >
           Add Ingredient
         </button>
