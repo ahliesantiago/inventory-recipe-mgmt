@@ -6,6 +6,7 @@ import { Trash } from 'lucide-vue-next'
 import StarRating from 'vue-star-rating'
 import { useRecipes } from '@/composables/useRecipes'
 import IngredientSearchInput from '@/components/ui/IngredientSearchInput.vue'
+import UnitSearchInput from '@/components/ui/UnitSearchInput.vue'
 import type { RecipeInputType } from '@/types/RecipeTypes'
 
 const { addRecipe, editRecipe, fetchRecipe, singleRecipe } = useRecipes()
@@ -121,12 +122,12 @@ onMounted(() => {
 
       <div>
         <label for="steps" class="block font-medium">Ingredients</label>
-        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 items-center mb-2">
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 mb-2">
           <h5 class="col-span-1 sm:col-span-2 text-center">Ingredient</h5>
           <h5 class="text-center">Quantity</h5>
           <h5 class="text-center">Unit</h5>
         </div>
-        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 space-y-2 items-center" v-for="(ingredient, index) in formData.ingredients" :key="index">
+        <div class="grid grid-cols-4 sm:grid-cols-8 gap-4 items-center mb-2" v-for="(ingredient, index) in formData.ingredients" :key="index">
           <div class="col-span-1 sm:col-span-2">
             <IngredientSearchInput
               v-model="ingredient.ingredient"
@@ -140,13 +141,12 @@ onMounted(() => {
             min="1"
             required
           />
-          <input
-            type="text"
+          <UnitSearchInput
             v-model="ingredient.unit"
-            class="col-span-1 border border-gray-500 rounded p-2 w-full"
-            required
+            input-class="col-span-1 border border-gray-500 rounded p-2 w-full"
+            :required="true"
           />
-          <div class="flex space-x-2">
+          <div class="col-span-1 flex justify-start">
             <button
               type="button"
               @click="formData.ingredients?.splice(index, 1)"

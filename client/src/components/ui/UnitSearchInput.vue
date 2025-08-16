@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useIngredientsStore } from '@/stores/ingredients'
+import { useUnitsStore } from '@/stores/units'
 import SearchInput from './SearchInput.vue'
-import type { ItemType } from '@/types/ItemTypes'
+import type { UnitType } from '@/types/ItemTypes'
 
 interface Props {
   modelValue: string
@@ -20,23 +20,30 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
-  'select': [ingredient: ItemType]
+  'select': [unit: UnitType]
 }>()
 
-const ingredientsStore = useIngredientsStore()
+const unitsStore = useUnitsStore()
 
 function handleUpdateModelValue(value: string) {
   emit('update:modelValue', value)
 }
 
-function handleSelect(ingredient: ItemType) {
-  emit('select', ingredient)
+function handleSelect(unit: UnitType) {
+  emit('select', unit)
+}
+
+// Custom display formatter for units: "unit_name (unit_acronym)"
+function formatUnitDisplay(unit: UnitType): string {
+  const name = unit.unit_name
+  const acronym = unit.unit_acronym
+  return acronym ? `${name} (${acronym})` : name
 }
 
 onMounted(() => {
-  // Fetch ingredients for autocomplete if not already loaded
-  if (ingredientsStore.ingredients.length === 0) {
-    ingredientsStore.fetchIngredients()
+  // Fetch units for autocomplete if not already loaded
+  if (unitsStore.units.length === 0) {
+    unitsStore.fetchUnits()
   }
 })
 </script>
@@ -46,12 +53,14 @@ onMounted(() => {
     :model-value="modelValue"
     @update:model-value="handleUpdateModelValue"
     @select="handleSelect"
-    :items="ingredientsStore.ingredients"
-    display-key="item_name"
+    :items="unitsStore.units"
+    display-key="unit_name"
+    :display-formatter="formatUnitDisplay"
+    :search-keys="['unit_name', 'unit_plural_name', 'unit_acronym', 'unit_plural_acronym']"
     :placeholder="placeholder"
     :input-class="inputClass"
     :required="required"
     :max-results="maxResults"
-    :loading="ingredientsStore.isLoading"
+    :loading="unitsStore.isLoading"
   />
 </template>
